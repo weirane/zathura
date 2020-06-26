@@ -88,7 +88,7 @@ run_synctex_forward(const char* synctex_fwd, const char* filename,
 static zathura_t*
 init_zathura(const char* config_dir, const char* data_dir,
              const char* cache_dir, const char* plugin_path, char** argv,
-             const char* synctex_editor, Window embed)
+             const char* synctex_editor, Window embed, char* x11_name)
 {
   /* create zathura session */
   zathura_t* zathura = zathura_create();
@@ -104,7 +104,7 @@ init_zathura(const char* config_dir, const char* data_dir,
   zathura_set_argv(zathura, argv);
 
   /* Init zathura */
-  if (zathura_init(zathura) == false) {
+  if (zathura_init(zathura, x11_name) == false) {
     zathura_free(zathura);
     return NULL;
   }
@@ -136,6 +136,7 @@ main(int argc, char* argv[])
   gchar* synctex_fwd    = NULL;
   gchar* mode           = NULL;
   gchar* search_string  = NULL;
+  gchar* x11_name       = NULL;
   bool   forkback       = false;
   bool   print_version  = false;
   int    page_number    = ZATHURA_PAGE_NUMBER_UNSPECIFIED;
@@ -158,6 +159,7 @@ main(int argc, char* argv[])
     { "synctex-pid",            '\0', 0, G_OPTION_ARG_INT,      &synctex_pid,    _("Highlight given position in the given process"),     "pid" },
     { "mode",                   '\0', 0, G_OPTION_ARG_STRING,   &mode,           _("Start in a non-default mode"),                       "mode" },
     { "find",                   'f',  0, G_OPTION_ARG_STRING,   &search_string,  _("Search for the given phrase and display results"),   "string" },
+    { "name",                   '\0', 0, G_OPTION_ARG_STRING,   &x11_name,       "Set X11 name",                                         "name" },
     { NULL, '\0', 0, 0, NULL, NULL, NULL }
   };
 
@@ -274,7 +276,10 @@ main(int argc, char* argv[])
 
   /* Create zathura session */
   zathura_t* zathura = init_zathura(config_dir, data_dir, cache_dir,
-                                    plugin_path, argv, synctex_editor, embed);
+                                    plugin_path, argv, synctex_editor, embed, x11_name);
+  if (x11_name) {
+    g_free(x11_name);
+  }
   if (zathura == NULL) {
     girara_error("Could not initialize zathura.");
     ret = -1;

@@ -418,14 +418,17 @@ init_shortcut_helpers(zathura_t* zathura)
 }
 
 bool
-zathura_init(zathura_t* zathura)
+zathura_init(zathura_t* zathura, const char* x11_name)
 {
   if (zathura == NULL) {
     return false;
   }
 
   /* Set application ID */
-  g_set_prgname("org.pwmt.zathura");
+  if (x11_name)
+    g_set_prgname(x11_name);
+  else
+    g_set_prgname("org.pwmt.zathura");
 
   /* load plugins */
   zathura_plugin_manager_load(zathura->plugins.manager);

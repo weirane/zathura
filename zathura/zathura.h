@@ -239,7 +239,7 @@ zathura_t* zathura_create(void);
  * @param zathura The zathura session
  * @return true if initialization has been successful
  */
-bool zathura_init(zathura_t* zathura);
+bool zathura_init(zathura_t* zathura, const char* x11_name);
 
 /**
  * Free zathura session
